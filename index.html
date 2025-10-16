@@ -11,19 +11,47 @@
         <div class="controls-panel">
             <h2>Controls</h2>
             <div class="control">
-                <label for="a-frequency">X-Axis Frequency (A)</label>
-                <input type="range" id="a-frequency" min="1" max="20" value="3">
-                <span id="a-frequency-value">3</span>
+                <label for="algorithm">Algorithm</label>
+                <select id="algorithm">
+                    <option value="lissajous" selected>Lissajous Curve</option>
+                    <option value="spirograph">Spirograph</option>
+                </select>
             </div>
-            <div class="control">
-                <label for="b-frequency">Y-Axis Frequency (B)</label>
-                <input type="range" id="b-frequency" min="1" max="20" value="4">
-                <span id="b-frequency-value">4</span>
+
+            <div id="lissajous-controls">
+                <div class="control">
+                    <label for="a-frequency">X-Axis Frequency (A)</label>
+                    <input type="range" id="a-frequency" min="1" max="20" value="3">
+                    <span id="a-frequency-value">3</span>
+                </div>
+                <div class="control">
+                    <label for="b-frequency">Y-Axis Frequency (B)</label>
+                    <input type="range" id="b-frequency" min="1" max="20" value="4">
+                    <span id="b-frequency-value">4</span>
+                </div>
+                <div class="control">
+                    <label for="phase-shift">Phase Shift (δ)</label>
+                    <input type="range" id="phase-shift" min="0" max="6.28" step="0.01" value="1.57">
+                    <span id="phase-shift-value">1.57</span>
+                </div>
             </div>
-            <div class="control">
-                <label for="phase-shift">Phase Shift (δ)</label>
-                <input type="range" id="phase-shift" min="0" max="6.28" step="0.01" value="1.57">
-                <span id="phase-shift-value">1.57</span>
+
+            <div id="spirograph-controls" class="hidden">
+                <div class="control">
+                    <label for="spiro-R">Outer Radius (R)</label>
+                    <input type="range" id="spiro-R" min="1" max="200" value="100">
+                    <span id="spiro-R-value">100</span>
+                </div>
+                <div class="control">
+                    <label for="spiro-r">Inner Radius (r)</label>
+                    <input type="range" id="spiro-r" min="1" max="200" value="60">
+                    <span id="spiro-r-value">60</span>
+                </div>
+                <div class="control">
+                    <label for="spiro-d">Offset (d)</label>
+                    <input type="range" id="spiro-d" min="1" max="200" value="80">
+                    <span id="spiro-d-value">80</span>
+                </div>
             </div>
             <div class="control">
                 <label for="detail-points">Curve Detail (Points)</label>

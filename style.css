@@ -83,3 +83,7 @@ body {
 #copy-button:hover {
     background-color: #357ABD;
 }
+
+.hidden {
+    display: none;
+}
