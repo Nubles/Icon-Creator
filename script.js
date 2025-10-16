@@ -31,10 +31,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyButton = document.getElementById('copy-button');
     const downloadSvgButton = document.getElementById('download-svg-button');
     const downloadPngButton = document.getElementById('download-png-button');
+    const presetNameInput = document.getElementById('preset-name');
+    const savePresetButton = document.getElementById('save-preset-button');
+    const presetList = document.getElementById('preset-list');
+    const loadPresetButton = document.getElementById('load-preset-button');
+    const deletePresetButton = document.getElementById('delete-preset-button');
+    const randomizeButton = document.getElementById('randomize-button');
 
     let currentSvgCode = '';
 
+    const updateUI = () => {
+        values.aFrequency.textContent = controls.aFrequency.value;
+        values.bFrequency.textContent = controls.bFrequency.value;
+        values.phaseShift.textContent = parseFloat(controls.phaseShift.value).toFixed(2);
+        values.spiroR.textContent = controls.spiroR.value;
+        values.spiro_r.textContent = controls.spiro_r.value;
+        values.spiroD.textContent = controls.spiroD.value;
+        values.detailPoints.textContent = controls.detailPoints.value;
+        values.strokeWidth.textContent = controls.strokeWidth.value;
+    };
+
     const generateSVG = () => {
+        updateUI();
         const algorithm = controls.algorithm.value;
         const points = parseInt(controls.detailPoints.value);
         const strokeWidth = parseInt(controls.strokeWidth.value);
@@ -50,9 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const a = parseInt(controls.aFrequency.value);
             const b = parseInt(controls.bFrequency.value);
             const delta = parseFloat(controls.phaseShift.value);
-            values.aFrequency.textContent = a;
-            values.bFrequency.textContent = b;
-            values.phaseShift.textContent = delta.toFixed(2);
             const scale = (width - 2 * padding) / 2;
             for (let i = 0; i <= points; i++) {
                 const t = (2 * Math.PI / points) * i;
@@ -64,9 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const R = parseInt(controls.spiroR.value);
             const r = parseInt(controls.spiro_r.value);
             const d = parseInt(controls.spiroD.value);
-            values.spiroR.textContent = R;
-            values.spiro_r.textContent = r;
-            values.spiroD.textContent = d;
             const scale = (width - 2 * padding) / (2 * (R + r));
             for (let i = 0; i <= points; i++) {
                 const t = (8 * Math.PI / points) * i;
@@ -147,5 +159,105 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const populatePresetList = () => {
+        presetList.innerHTML = '';
+        const presets = JSON.parse(localStorage.getItem('svgGeneratorPresets')) || {};
+        for (const name in presets) {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            presetList.appendChild(option);
+        }
+    };
+
+    const savePreset = () => {
+        const name = presetNameInput.value.trim();
+        if (!name) {
+            alert('Please enter a name for the preset.');
+            return;
+        }
+        const presets = JSON.parse(localStorage.getItem('svgGeneratorPresets')) || {};
+        presets[name] = {
+            algorithm: controls.algorithm.value,
+            aFrequency: controls.aFrequency.value,
+            bFrequency: controls.bFrequency.value,
+            phaseShift: controls.phaseShift.value,
+            spiroR: controls.spiroR.value,
+            spiro_r: controls.spiro_r.value,
+            spiroD: controls.spiroD.value,
+            detailPoints: controls.detailPoints.value,
+            strokeWidth: controls.strokeWidth.value,
+            strokeColor: controls.strokeColor.value,
+            fillToggle: controls.fillToggle.checked,
+        };
+        localStorage.setItem('svgGeneratorPresets', JSON.stringify(presets));
+        populatePresetList();
+        presetNameInput.value = '';
+    };
+
+    const loadPreset = () => {
+        const name = presetList.value;
+        if (!name) return;
+        const presets = JSON.parse(localStorage.getItem('svgGeneratorPresets')) || {};
+        const preset = presets[name];
+        if (preset) {
+            controls.algorithm.value = preset.algorithm;
+            controls.aFrequency.value = preset.aFrequency;
+            controls.bFrequency.value = preset.bFrequency;
+            controls.phaseShift.value = preset.phaseShift;
+            controls.spiroR.value = preset.spiroR;
+            controls.spiro_r.value = preset.spiro_r;
+            controls.spiroD.value = preset.spiroD;
+            controls.detailPoints.value = preset.detailPoints;
+            controls.strokeWidth.value = preset.strokeWidth;
+            controls.strokeColor.value = preset.strokeColor;
+            controls.fillToggle.checked = preset.fillToggle;
+
+            // Trigger UI update
+            generateSVG();
+
+            // Show/hide controls based on loaded algorithm
+            if (preset.algorithm === 'lissajous') {
+                lissajousControls.classList.remove('hidden');
+                spirographControls.classList.add('hidden');
+            } else {
+                lissajousControls.classList.add('hidden');
+                spirographControls.classList.remove('hidden');
+            }
+        }
+    };
+
+    const deletePreset = () => {
+        const name = presetList.value;
+        if (!name) return;
+        const presets = JSON.parse(localStorage.getItem('svgGeneratorPresets')) || {};
+        delete presets[name];
+        localStorage.setItem('svgGeneratorPresets', JSON.stringify(presets));
+        populatePresetList();
+    };
+
+    const randomize = () => {
+        if (controls.algorithm.value === 'lissajous') {
+            controls.aFrequency.value = Math.floor(Math.random() * 20) + 1;
+            controls.bFrequency.value = Math.floor(Math.random() * 20) + 1;
+            controls.phaseShift.value = (Math.random() * 6.28).toFixed(2);
+        } else {
+            controls.spiroR.value = Math.floor(Math.random() * 200) + 1;
+            controls.spiro_r.value = Math.floor(Math.random() * 200) + 1;
+            controls.spiroD.value = Math.floor(Math.random() * 200) + 1;
+        }
+        controls.detailPoints.value = Math.floor(Math.random() * 1901) + 100;
+        controls.strokeWidth.value = Math.floor(Math.random() * 10) + 1;
+        controls.strokeColor.value = `#${('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6)}`;
+        controls.fillToggle.checked = Math.random() < 0.5;
+        generateSVG();
+    };
+
+    savePresetButton.addEventListener('click', savePreset);
+    loadPresetButton.addEventListener('click', loadPreset);
+    deletePresetButton.addEventListener('click', deletePreset);
+    randomizeButton.addEventListener('click', randomize);
+
+    populatePresetList();
     generateSVG();
 });
