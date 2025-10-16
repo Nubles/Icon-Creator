@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative SVG Logo/Icon Creator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="controls-panel">
+            <h2>Controls</h2>
+            <div class="control">
+                <label for="a-frequency">X-Axis Frequency (A)</label>
+                <input type="range" id="a-frequency" min="1" max="20" value="3">
+                <span id="a-frequency-value">3</span>
+            </div>
+            <div class="control">
+                <label for="b-frequency">Y-Axis Frequency (B)</label>
+                <input type="range" id="b-frequency" min="1" max="20" value="4">
+                <span id="b-frequency-value">4</span>
+            </div>
+            <div class="control">
+                <label for="phase-shift">Phase Shift (δ)</label>
+                <input type="range" id="phase-shift" min="0" max="6.28" step="0.01" value="1.57">
+                <span id="phase-shift-value">1.57</span>
+            </div>
+            <div class="control">
+                <label for="detail-points">Curve Detail (Points)</label>
+                <input type="range" id="detail-points" min="100" max="2000" value="500">
+                <span id="detail-points-value">500</span>
+            </div>
+            <h3>Styling</h3>
+            <div class="control">
+                <label for="stroke-width">Stroke Width</label>
+                <input type="range" id="stroke-width" min="1" max="10" value="2">
+                <span id="stroke-width-value">2</span>
+            </div>
+            <div class="control">
+                <label for="stroke-color">Stroke Color</label>
+                <input type="color" id="stroke-color" value="#000000">
+            </div>
+            <div class="control">
+                <input type="checkbox" id="fill-toggle">
+                <label for="fill-toggle">Close and Fill Shape</label>
+            </div>
+        </div>
+        <div class="preview-panel">
+            <h2>Preview</h2>
+            <div id="svg-container"></div>
+        </div>
+        <div class="code-panel">
+            <h2>SVG Code</h2>
+            <textarea id="code-output" readonly></textarea>
+            <button id="copy-button">Copy SVG Code</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
