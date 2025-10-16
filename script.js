@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const svgContainer = document.getElementById('svg-container');
     const codeOutput = document.getElementById('code-output');
     const copyButton = document.getElementById('copy-button');
+    const downloadSvgButton = document.getElementById('download-svg-button');
+    const downloadPngButton = document.getElementById('download-png-button');
+
+    let currentSvgCode = '';
 
     const generateSVG = () => {
         const algorithm = controls.algorithm.value;
@@ -80,13 +84,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const fill = closeAndFill ? '#4A90E2' : 'none';
-        const svgCode = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+        currentSvgCode = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <path d="${pathData}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="${fill}" />
 </svg>`;
 
-        svgContainer.innerHTML = svgCode;
-        codeOutput.value = svgCode.replace(/></g, '>\n    <').replace(/ \/>/g, ' />\n');
+        svgContainer.innerHTML = currentSvgCode;
+        codeOutput.value = currentSvgCode.replace(/></g, '>\n    <').replace(/ \/>/g, ' />\n');
     };
+
+    downloadSvgButton.addEventListener('click', () => {
+        const blob = new Blob([currentSvgCode], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'logo.svg';
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    downloadPngButton.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+
+        canvg(canvas, currentSvgCode, {
+            ignoreMouse: true,
+            ignoreAnimation: true,
+            renderCallback: () => {
+                const pngUrl = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = pngUrl;
+                a.download = 'logo.png';
+                a.click();
+            }
+        });
+    });
 
     controls.algorithm.addEventListener('change', () => {
         if (controls.algorithm.value === 'lissajous') {
